@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Профиль | {{ app_name }}{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>{{ user.username }}</h1>
+</div>
+
+<img class="img-rounded profile-thumbnail" src="{{ user.robohash(size=200) }}">
+
+<div class="profile-header">
+    <p>О себе:
+        {% if user.about %}
+            <span>{{ user.about }}</span>
+        {% else %}
+            <span>это тайна</span>
+        {% endif %}
+    </p>
+    <p>
+        Количество зарубок: {{ posts_count }}.
+    </p>
+
+    {% if current_user.is_authenticated and (current_user.get_id()|int == user.id|int) %}
+        <p>
+            <button id="edit-profile-button" class="btn btn-default">Редактировать профиль</button>
+        </p>
+        
+        <div id="edit-profile-form">
+            {{ wtf.quick_form(form) }}
+        </div>
+        
+        <p><a class="btn btn-default" role="button" href="{{ url_for('change_password') }}">Сменить пароль</a></p>
+    {% endif %}
+</div>
+
+<script type="text/javascript">
+button = document.getElementById('edit-profile-button');
+form_wrapper = document.getElementById('edit-profile-form');
+button.addEventListener('click', function() {
+    form_wrapper.style.display = "block";
+    form_wrapper.style.margin = "1em 0";
+    button.style.display = "none";
+    }, false);
+</script>
+
+
+{% endblock %}
